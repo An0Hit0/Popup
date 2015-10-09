@@ -1,0 +1,109 @@
+html, body {
+ background-color:#000;
+ color:#fff;
+ padding:16px;
+ text-align:center;
+ font:16px "Lucida Console";
+}
+
+* {
+ padding: 0;
+ margin: 0;
+}
+
+a:link {
+ color:#844;
+ text-decoration:none;
+}
+
+a:visited {
+ color:#844;
+ text-decoration:none;
+}
+
+a:hover {
+ text-decoration:underline;
+}
+
+a:focus {
+ text-decoration:underline;
+}
+
+button {
+ margin: 4px;
+ padding:4px 8px;
+ border-radius:18px;
+ border:2px solid #fff;
+ display:inline-block;
+ color:#fff;
+ background-color:transparent;
+ font-family:"Lucida Console";
+ font-size:16px;
+ text-decoration:none;
+}
+button:hover {
+ color:#000;
+ background-color:#fff;
+}
+button:active {
+ position:relative;
+ top:1px;
+}
+
+button:focus {
+ text-decoration:underline;
+ outline: 0;
+}
+
+.hidden {
+ display:none;
+}
+
+.title {
+ padding-top:0.8em;
+ padding-bottom:0.8em;
+ color: #fff;
+ text-shadow: 0px 4px 3px rgba(255,255,255,0.8),0px 8px 13px rgba(255,255,255,0.4),0px 18px 23px rgba(255,255,255,0.4);
+ font: 32px "Lucida Console";
+}
+
+.block {
+ display:inline-block;
+ max-width:100%;
+ margin:0.2em;
+ padding:0.4em;
+ background-color:#000;
+ border:2px solid #fff;
+ border-radius:15px;
+ text-align:left;
+ font:16px "Lucida Console";
+}
+
+.block a:link {
+ color: #844;
+ text-decoration: none;
+}
+.block a:visited {
+ color: #844;
+ text-decoration: none;
+}
+
+.block a:hover {
+ text-decoration:underline;
+}
+
+.block a:focus {
+ text-decoration:underline;
+}
+
+.blocktitle {
+ text-align:center;
+ font:24px "Lucida Console";
+ margin-top:0.4em;
+ margin-bottom:0.4em;
+}
+
+.blockerror {
+ text-shadow: 2px 2px 2px #ff99aa;
+ font-size: 24px;
+}

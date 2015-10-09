@@ -1,0 +1,10 @@
+<script type="text/javascript">
+	$().ready(function() {
+		var bananas = ["banana", "carot", "colorful", "computer", "dreadlocks", "guitar", "love", "mexican", "suit", "upside-down"];
+		var banana = bananas[Math.floor(Math.random() * bananas.length)];
+		$("#banana").html("<img src='./banana/" + banana + ".gif' style='min-width:100%;'>");
+	});
+</script>
+
+<div id="banana" style="padding:8px;"></div>
+<center><button class='popup_close'>Close</button></center>
