@@ -1,490 +1,387 @@
 /*
-	Popup 1.0.0
+	Popup 1.1.0
 	Written by: An0Hit0
 	Liscence: http://www.opensource.org/licenses/mit-license.php
 */
 
 (function($) {
 	
-	//zoom correction is neccessary for getting/setting correct pixel coordinates on some browsers
-	$.zoomCorrectionEnable = false;
-	if(navigator.userAgent.match(/(OPR\/)/) != null) $.zoomCorrectionEnable = true;
-	
-	$.zoomCorrection = function() {
-		return $.zoomCorrectionEnable == true ? parseFloat($("body").css("zoom")) : 1.0;
-	};
-	
 	function popup_instance(owner, id, options) {
 		this.owner = owner;
 		this.id = id;
-		this.object = null;
-		this.content_object = null;
-		this.template_object = null;
-		this.loading_object = null;
-		this.background_object = null;
+		this.options = options || {};
 		this.url = null;
 		this.parameters = null;
-		this.xhr = null;
-		this.reload = false;
+		this.object = null;
+		this.parent = null;
+		this.object = null;
+		this.background = null;
+		this.template = null;
+		this.loading = null;
+		this.loaded = false;
 		this.opened = false;
-		this.callbacks = {};
+		this.ajax = null;
 		this.drag = {};
 		
+		//detect ios
+		this.ios = false;
+		if(['iPad', 'iPhone', 'iPod'].indexOf(navigator.platform) >= 0) this.ios = true;
+		
+		//center modal popups by default
+		if (this.options['modal'] == true && this.options['center'] == null) this.options['center'] = true;
+		
+		//give modal popups a background by default
+		if (this.options['modal'] == true && this.options['background'] == null) this.options['background'] = true;
+		
+		//find the popup object, or create it if it doesn't exist
+		this.object = $("#" + id).first();
+		if (this.object.length > 0)
+		{
+			if (this.options['parent'] != null) this.parent = this.options['parent'];
+			else this.parent = this.object.parent();
+			this.object.detach();
+		}
+		else
+		{
+			this.object = $("<div class='popup_window'></div>");
+			this.object.attr("id", id);
+			this.parent = this.options['parent'] || $("body");
+		}
+		
+		this.object.css("display", "none");
+		this.object.css("z-index", 0);
+		this.object.css("position", "absolute")
+		this.object.css("pointer-events", "auto");
+		this.parent.append(this.object);
+		
+		//load the template
+		this.template = $(this.options['template']).first();
+		if (this.template.length > 0)
+		{
+			this.template.css("display", "none");
+		}
+		else
+		{
+			this.template = null;
+		}
+		
+		//load the loading message
+		this.loading = $(this.options['loading']).first();
+		if (this.loading.length > 0)
+		{
+			this.loading.css("display", "none");
+		}
+		else
+		{
+			this.loading = null;
+		}
+		
+		//load the background
+		if(this.options['background'] == true)
+		{
+			this.background = $("<div class='popup_background'></div>");
+			this.background.css("background-color", "#000");
+			this.background.css("opacity", 0.5);
+		}
+		else if(typeof this.options['background'] == 'number')
+		{
+			var opacity = this.options['background'];
+			this.background = $("<div class='popup_background'></div>");
+			this.background.css("background-color", "#000");
+			this.background.css("opacity", opacity);
+		}
+		else if(this.options['background'] != null)
+		{
+			this.background = $(this.options['background']).first();
+			this.background.detach();
+		}
+		else
+		{
+			this.background = null;
+		}
+		
+		if (this.background != null)
+		{
+			this.background.attr("id", id + "_background");
+			this.background.css("display", "none");
+			this.background.css("z-index", 0);
+			this.background.css("position", "absolute")
+			this.background.css("pointer-events", "auto");
+			this.parent.append(this.background);
+		}
+		
 		//open the popup
-		this.open = function() {
-			//return if the popup is already open
+		this.open = function(options) {
+			//set the popup status to open, return if it is already set
 			if (this.opened == true) return;
-			
-			//run callback and cancel if the callback return true
-			if (this.callbacks['open'] != null && this.callbacks['open'](this) == true) return;
-			
-			//set the popup open state
 			this.opened = true;
-	
-			//bind event handlers
-			this.bind();
+
+			//merge options into the default options
+			options = $.extend({}, this.options, options);
 			
-			//load the content from a url
-			if (this.reload == true && this.url != null)
+			//load popup content
+			if (this.loaded != true || this.ajax != null || options['reload'] == true)
 			{
-				this.load(this.url, this.parameters);
+				//load content from url
+				if (options['url'] != null)
+				{
+					this.load(options['url'], options['parameters']);
+				}
+				//get the content from the content option
+				else if (options['content'] != null)
+				{
+					this.content(options['content']);
+				}
+				//if all else fails, just display the popup div as is...
+				else
+				{
+					this.init();
+					this.bind();
+				}
+				//set the popup loaded value to true in all cases
+				this.loaded = true;
 			}
-			
-			//display the background if it exists
-			if (this.background_object != null) this.background_object.css("display", "block");
-			
-			//display the popup
-			this.object.css("display", "block");
-			
-			//trigger custom event
-			this.object.trigger("open", [this]);
-			
-			//focus the popup
-			this.focus();
+			//if the content is already loaded, get the window ready and display it
+			else
+			{
+				this.init();
+				this.bind();
+			}
 			
 			return this;
 		}
 		
 		//close the popup
 		this.close = function() {
-			//return if the popup is already closed
+			//set the popup status to closed, return if it is already set
 			if (this.opened != true) return;
-			
-			//run callback and cancel if the callback return true
-			if (this.callbacks['close'] != null && this.callbacks['close'](this) == true) return;
-			
-			//set the popup open state
 			this.opened = false;
+		
+			//remove event listeners from popup content
+			this.unbind;
 		
 			//hide the popup
 			this.object.css("display", "none");
 			
 			//hide the background
-			if (this.background_object != null) this.background_object.css("display", "none");
-			
-			//trigger custom event
-			this.object.trigger("close", [this]);
-			
-			//unbind event handlers
-			this.unbind();
+			if (this.background != null) this.background.css("display", "none");
 			
 			return this;
 		}
 		
-		//toggle the popup open or closed
-		this.toggle = function() {
-			if (this.opened != true) return this.open();
-			else return this.close();
+		this.toggle = function(options) {
+			if (this.opened != true) this.open(options);
+			else this.close();
 		}
 		
-		//put this popup in front of the popup with the highest the z-index
 		this.focus = function() {
-			//run callback and cancel if the callback return true
-			if (this.callbacks['focus'] != null && this.callbacks['focus'](this) == true) return;
-		
-			//trigger custom event
-			this.object.trigger("focus", [this]);
-			
-			//focusing is done in the main popup object because it tracks the z-index
-			this.owner.focus(this.id);
-			
-			return this;
+			return this.owner.focus(this.id);
 		}
 		
-		//get or set current content of popup window
-		this.content = function(content) {
-			//just return the current content if no new content is specified
-			if (typeof content == "undefined") return this.object.find(".popup_content").html();
-			
-			//run callback and cancel if the callback return true
-			if (this.callbacks['change'] != null && this.callbacks['change'](this, content) == true) return;
-			
-			//clear bindings
-			this.unbind();
-			
-			//set the new content depending of the type of the content argument
-			if (typeof content == "string")
-				this.content_object.html(content);
-			else if ($(content).popup() != null)
-				this.content_object.html($(content).content_object.html());
+		//called when a popup is opened to get it ready for display
+		this.init = function() {
+			//set popup dimensions
+			this.object.css("width", this.options['width'] || "auto");
+			this.object.css("height", this.options['height'] || "auto");
+		
+			//set popup position
+			if(this.options['center'] == true || this.options['center_open'] == true || this.options['center_once'] == true)
+			{
+				//center the popup to the window
+				this.center();
+				//set center_once option to false once the window has been centered
+				this.options['center_once'] = false;
+			}
 			else
-				this.content_object.empty().append($(content).first().clone());
+			{
+				//manually set popup position
+				this.object.css("left", this.options['left']);
+				this.object.css("top", this.options['top']);
+				this.object.css("transform", this.options['transform'] || this.object.css("transform"));
+			}
 			
-			//bind events to new content
-			if (this.opened == true) this.bind();
+			//display the background if it is enabled
+			if (this.background != null) {
+				this.background.css("width", "100%");
+				this.background.css("height", "100%");
+				this.background.css("top", "0%");
+				this.background.css("left", "0%");
+				this.background.css("position", "fixed");
+				this.background.css("display", "block");
+			}
 			
-			//trigger custom event
-			this.object.trigger("change", [this]);
+			//display the popup
+			this.object.css("display", "block");
+			this.focus();
 			
 			return this;
 		}
 		
 		//load a new url in the popup window
 		this.load = function(url, parameters) {
+			//initalize variables
 			parameters = parameters || {};
-			
-			//run callback and cancel if the callback return true
-			if (this.callbacks['load'] != null && this.callbacks['load'](this, url, parameters) == true) return;
-			
-			//set the current url and parameters to their new values
 			this.url = url;
 			this.parameters = parameters;
 			
-			//cancel the current request (if any)
-			if (this.xhr != null)
+			//set up the template
+			if (this.template != null)
+				this.object.html(this.template.html());
+			else
+				this.object.html("<div class='popup_content'></div>");
+		
+			//set up the loading window
+			if (this.loading != null)
 			{
-				this.xhr.abort();
-				this.xhr = null;
+				this.object.find(".popup_content").html("<div class='popup_loading'></div>");
+				this.object.find(".popup_loading").html(this.loading.html());
+				this.object.data("loading", true);
 			}
 			
-			//display loading message until popup is loaded
-			if(this.loading_object != null)
-			{
-				this.content_object.hide();
-				this.loading_object.show();
-				this.object.trigger("change", [this]);
-			}
+			//cancel any previous ajax request
+			var ajax = this.ajax;
+			if(ajax != null) ajax.abort();
 			
 			//get content via ajax
 			var popup = this;
-			this.xhr = $.ajax({
+			this.ajax = $.ajax({
 				url: url,
 				data: parameters,
 				success: function(data)
 				{
-					//remove the loading message
-					if(popup.loading_object != null) 
-					{
-						popup.loading_object.hide();
-						popup.content_object.show();
-					}
-				
 					//sent the new content
-					popup.content(data);
+					popup.object.find(".popup_content").html(data);
 					
-					//trigger custom event
-					popup.object.trigger("load", [popup]);
+					//set loading as completed
+					popup.ajax = null;
 					
-					//set the active xhr request to null
-					popup.xhr = null;
+					//get the popup ready to be displayed
+					popup.init();
+					popup.bind();
 				},
 				error: function(xhr, ajaxOptions, thrownError)
 				{
-					//remove the loading message
-					if(popup.loading_object != null) 
-					{
-						popup.loading_object.hide();
-						popup.content_object.show();
-					}
-					
-					//don't show the error message for an intentional abort
-					if (thrownError == "abort") return;
+					//ignore abort errors
+					if(xhr.statusText == "abort") return;
 				
 					//show the error message
-					var message = "<div class='popup_error'>Error: " + xhr.status + " " + xhr.statusText + "</div>" +
-						"<div align='center'><button class='popup_close'>Close</button></div>";
-					popup.content(message);
+					popup.object.find(".popup_content").html("<div class='popup_error'></div><div align='center'><button class='popup_close'>Close</button></div>");
+					popup.object.find(".popup_error").html("Error: " + xhr.status + " " + xhr.statusText);
 					
-					//trigger custom event
-					popup.object.trigger("error", [popup]);
-					
-					//set the active xhr request to null
-					popup.xhr = null;
+					//get the popup ready to be displayed
+					popup.init();
+					popup.bind();
 				}
 			});
 			
-			return this;
+			//show the loading window
+			if (this.loading != null)
+			{
+				this.init();
+				this.bind();
+			}
 		}
 		
-		//set or check the popups's template
-		this.template = function(template) {
-			if (typeof template == "undefined") return this.template_object;
-			
-			//unbind events
-			this.unbind();
-			
-			//remove the content object from the dom
-			this.content_object.remove();
-			
-			//remove the current template from the dom
-			if (this.template_object != null) this.template_object.remove();
-			
-			//get a selector for the new template
-			if (template == true)
-				template = $("<div class='popup_template'><div class='popup_content'></div></div>");
-			else if (typeof template == "string")
-				template = $(template);
-			else
-				template = $(template).first().clone();
-				
-			if (template.length > 0)
-			{
-				//set the default css properties
-				template.addClass("popup_template");
-				template.css("display", "block");
-			
-				//append the new template to the dom
-				this.object.empty();
-				this.object.append(template);
-				template.find(".popup_content").first().replaceWith(this.content_object);
-				if (this.loading_object != null) this.content_object.after(this.loading_object);
-			}
-			else
-			{
-				//restore the content with no template
-				this.object.empty();
-				this.object.append(this.content_object);
-				if (this.loading_object != null) this.content_object.after(this.loading_object);
-				template = null;
-			}
-			
-			//restore bindings
-			if (this.opened == true) this.bind();
-			
-			//set new template
-			this.template_object = template;
-			
-			return this;
+		//reload the current url in the popup window
+		this.reload = function() {
+			return this.load(this.url, this.parameters);
 		}
 		
-		//set or check the popup's loading message
-		this.loading = function(loading) {
-			if (typeof loading == "undefined") return this.loading_object;
+		//get or set current content of popup window
+		this.content = function(content) {
+			//just return the current content if no new content is specified
+			if (content == null) return this.object.html();
 			
-			//remove the current loading object from the dom
-			if (this.loading_object != null) this.loading_object.remove();
-
-			//get a selector for the background
-			if (loading == true)
-				loading = $("<div class='popup_loading'></div>");
-			else if (typeof loading == "string")
-				loading = $(loading);
+			//set up the template
+			if (this.template != null)
+				this.object.html(template.html());
 			else
-				loading = $(loading).first().clone();
+				this.object.html("<div class='popup_content'></div>");
 			
-			if (loading.length > 0)
-			{
-				//set the default css properties
-				loading.addClass("popup_loading");
-				loading.css("display", "nons");
-				
-				//append the loading object to the dom
-				this.content_object.after(loading);
-			}
-			else
-			{
-				loading = null;
-			}
+			//set the new content
+			this.object.find(".popup_content").html(content);
 			
-			//set new loading message
-			this.loading_object = loading;
-
-			return this;
+			//get the popup ready to be displayed
+			this.init();
+			this.bind();
+			
+			return new_content;
 		}
 		
-		//set or check the popup's background
-		this.background = function(background) {
-			if (typeof background == "undefined") return this.background_object;
-			
-			//unbind events
-			this.unbind();
-			
-			//remove the current background from the dom
-			if (this.background_object != null) this.background_object.remove();
-			
-			//get a selector for the background
-			if (background == true)
-				background = $("<div class='popup_background popup_close'></div>");
-			else if (typeof background == "string")
-				background = $(background);
-			else
-				background = $(background).first().clone();
-			
-			if (background.length > 0)
-			{
-				//set the default css properties
-				background.addClass("popup_background");
-				background.attr("id", id + "_background");
-				background.css("display", this.opened == true ? "block" : "none");
-				background.css("position", "fixed");
-				background.css("width", "100%");
-				background.css("height", "100%");
-				background.css("top", "0%");
-				background.css("left", "0%");
-				background.css("z-index", this.object.css("z-index") - 1);
-			
-				//append the new background to the dom
-				this.object.parent().append(background);
-			}
-			else
-			{
-				background = null;
-			}
-			
-			//set the new background
-			this.background_object = background;
-			
-			//restore bindings
-			if (this.opened == true) this.bind();
-
-			return this;
-		}
-		
-		//define or check callbacks that are called when certain methods are run
-		this.callback = function(type, callback) {
-			if (typeof callback == "undefined") return this.callbacks[type];
-			
-			//set new callback
-			this.callbacks[type] = callback;
-			
-			return this;
-		}
-		
-		//centers the popup to the parent element
 		this.center = function() {
-			var parent = this.object.parent().is('body') ? $(window) : this.object.parent();
-			var zoom = $.zoomCorrection();
-			var scroll_top = parent.scrollTop() / zoom;
-			var scroll_left = parent.scrollLeft() / zoom;
-			var parent_height = parent.height() / zoom;
-			var parent_width = parent.width() / zoom;
+			var scroll_top = $(window).scrollTop();
+			var scroll_left = $(window).scrollLeft();
+			var window_height = $(window).height();
+			var window_width = $(window).width();
+			var document_height = $(document).height();
+			var document_width = $(document).width();
 			var height = this.object.outerHeight(true);
-			var width = this.object.outerWidth(true);
-			
-			var top = scroll_top + (parent_height - height) / 2;
-			var left = scroll_left + (parent_width - width) / 2;
-			
-			this.object.css("top", top + "px");
-			this.object.css("left", left + "px");
-		
-			return this;
-		}
-		
-		//centers the popup the the parent element and allows for scrolling
-		this.center_lock = function() {
-			var parent = this.object.parent().is('body') ? $(window) : this.object.parent();
-			var zoom = $.zoomCorrection();
-			var scroll_top = parent.scrollTop() / zoom;
-			var scroll_left = parent.scrollLeft() / zoom;
-			var parent_height = parent.height() / zoom;
-			var parent_width = parent.width() / zoom;
-			var height = this.object.outerHeight(true);
-			var width = this.object.outerWidth(true);
+			var width;
 			var top;
 			var bottom;
 			var left;
 			var right;
 			
-			//calculate popup's top position
-			if (height < parent_height)
+			//calculate zoom
+			var zoom = 1.0;
+			if(this.ios == true) zoom = document.documentElement.clientWidth / window.innerWidth;
+			
+			//fix width
+			if(this.ajax != null) //popup still loading
+				this.object.css("width", "auto");
+			else //popup loaded
+				this.object.css("width", "100%");
+			width = this.object.outerWidth(true);
+			
+			if(width > window_width / zoom)
 			{
-				//simple centering when the popup fits in the parent's height
-				top = scroll_top + (parent_height - height) / 2;
+				this.object.css("width", window_width / zoom);
+				width = this.object.outerWidth(true);
 			}
+			
+			//calculate top position
+			if(height < window_height / zoom)
+			{
+				top = scroll_top + (window_height / zoom - height) / 2;
+			}
+			//allow scrolling if the popup is larger than the window height
 			else
 			{
-				//center popup while allowing for scrolling if the popup is bigger than the parent's height
 				top = this.object.position().top;
 				bottom = top + height;
 				
-				//if popup is past the top edge of the parent, align it with the parent's edge
-				if (top > scroll_top * zoom)
+				if (top > scroll_top)
 					top = scroll_top;
-				//if popup is past the bottom edge of the parent, align it with the parent's edge
-				else if (bottom < scroll_top * zoom + parent_height)
-					top = scroll_top + parent_height - height;
-				//leave the popup where it is
-				else
-					top = null;
+				else if (bottom < scroll_top + (window_height / zoom))
+					top = scroll_top + (window_height / zoom) - height;
 			}
 			
-			//calculate popup's left position
-			if (width < parent_width)
+			//calculate left position
+			if(width < window_width / zoom)
 			{
-				//simple centering when the popup fits in the parent's width
-				left = scroll_left + (parent_width - width) / 2;
+				left = scroll_left + (window_width / zoom - width) / 2;
 			}
+			//allow scrolling if the popup is larger than the window width
 			else
 			{
-				//center popup while allowing for scrolling if the popup is bigger than the parent's width
 				left = this.object.position().left;
 				right = left + width;
 				
-				//if popup is past the left edge of the parent, align it with the parent's edge
-				if (left > scroll_left * zoom)
+				if (left > scroll_left)
 					left = scroll_left;
-				//if popup is past the right edge of the parent, align it with the parent's edge
-				else if (right < scroll_left * zoom + parent_width)
-					left = scroll_left + parent_width - width;
-				//leave the popup where it is
-				else
-					left = null;
+				else if (right < scroll_left + (window_width / zoom))
+					left = scroll_left + (window_width / zoom) - width;
 			}
 			
-			//keep popup within parent's boundries
-			if (top != null && top < -0.5) top = 0;
-			if (left != null && left < -0.5) left = 0;
+			//set position by css
+			this.object.css("top", top < 0 ? 0 : top);
+			this.object.css("left", left < 0 ? 0 : left);
 			
-			//set popup position
-			if (top != null) this.object.css("top", top + "px");
-			if (left != null) this.object.css("left", left + "px");
-			
-			return this;
-		}
-		
-		//set or retrieve centering options
-		var center_options = {};
-		this.center_options = function(options) {
-			//set centering options with the options argument if it is given
-			if (typeof options == "undefined") return center_options;
-			
-			//if the type of options is already an object just set it as the new options object
-			if (typeof options == "object") return center_options = options;
-			
-			//lock popup to center
-			if (options == true || options == "lock")
-			{
-				options = {"lock": true};
-			}
-			//center once the next time the popup is opened
-			else if (options == "once")
-			{
-				options = {"once": true, "open": true};
-			}
-			//for all other string values of options...
-			else if (typeof options == "string")
-			{
-				var keys = options.split(' ');
-				options = {};
-				
-				$.each(keys, function(index, key) {
-					if (key == "") return true;
-					options[key] = true;
-				});
-			}
-			
-			//set new center options
-			center_options = options;
+			//fix document expansion
+			if ($(document).width() > document_width)
+				this.object.css("left", left - ($(document).width() - document_width));
+			if ($(document).height() > document_height)
+				this.object.css("top", top - ($(document).height() - document_height));
 			
 			return this;
 		}
@@ -492,79 +389,48 @@
 		//bind objects in the popup window with their appropriate event handlers
 		this.bind = function() {
 			this.object.bind("mousedown", {self: this}, this.focus_click);
-			
-			this.object.filter(".popup_close").bind("click", {self: this}, this.close_click);
 			this.object.find(".popup_close").bind("click", {self: this}, this.close_click);
-			if (this.background_object != null)
-			{
-				this.background_object.filter(".popup_close").bind("click", {self: this}, this.close_click);
-				this.background_object.find(".popup_close").bind("click", {self: this}, this.close_click);
-			}
-			
+			if (this.background != null) this.background.bind("click", {self: this}, this.close_click);
 			this.object.find(".popup_drag").css("cursor", "move");
 			this.object.find(".popup_drag").bind("mousedown", {self: this}, this.drag_mouse_down);
-			
-			this.object.bind("open load change window", {self: this}, this.center_event);
-			this.object.find("*").bind("load", {self: this}, this.center_event);
-			if(this.object.parent().is('body') != true) this.object.parent().bind("scroll resize", {self: this}, this.center_event);
-			
-			this.object.bind("DOMNodeInserted DOMNodeRemoved", {self: this}, this.dom_event);
-			
-			$(window).bind("scroll resize zoom", {self: this}, this.window_event);
-			
+			this.object.bind("DOMNodeInserted DOMNodeRemoved", {self: this}, this.center_event);
 			return this;
 		}
 		
 		//remove event handler bindings from popup window
-		this.unbind = function() {		
+		this.unbind = function() {
 			this.object.unbind("mousedown", this.focus_click);
-			
-			this.object.filter(".popup_close").unbind("click", this.close_click);
 			this.object.find(".popup_close").unbind("click", this.close_click);
-			if (this.background_object != null)
-			{
-				this.background_object.filter(".popup_close").unbind("click", this.close_click);
-				this.background_object.find(".popup_close").unbind("click", this.close_click);
-			}
-			
+			if (this.background != null) this.background.unbind("click", this.close_click);
 			this.object.find(".popup_drag").unbind("mousedown", this.drag_mouse_down);
-			
-			this.object.unbind("open load change window", this.center_event);
-			this.object.find("*").unbind("load", this.center_event);
-			if(this.object.parent().is('body') != true) this.object.parent().unbind("scroll resize", this.center_event);
-			
-			this.object.unbind("DOMNodeInserted DOMNodeRemoved", this.dom_event);
-			
-			$(window).unbind("scroll resize zoom", this.window_event);
-			
+			this.object.unbind("DOMNodeInserted DOMNodeRemoved", this.center_event);
 			return this;
 		}
 		
 		this.focus_click = function(event) {
 			var self = event.data.self;
-			self.focus();
-			return;
+			return self.focus();
 		}
 		
 		this.close_click = function(event) {
 			var self = event.data.self;
-			self.close();
-			return;
+			return self.close();
 		}
 		
 		this.drag_mouse_down = function(event) {
 			var self = event.data.self;
-			var state = self.drag;
+			
+			//don't allow dragging when centering is enabled
+			if (self.options['center'] == true) return;
 			
 			//keep track of the window's starting position
 			position = self.object.position();
-			state.x_start = position.left;
-			state.y_start = position.top;
+			self.drag.x = position.left;
+			self.drag.y = position.top;
 			
 			//set the position offset for dragging based on where the mouse click occured
-			var zoom = $.zoomCorrection();
-			state.x_offset = event.pageX / zoom;
-			state.y_offset = event.pageY / zoom;
+			self.drag.x_offset = event.pageX;
+			self.drag.y_offset = event.pageY;
 			
 			//bind event listeners
 			self.parent.mousemove({self: self}, self.drag_mouse_move);
@@ -575,26 +441,22 @@
 		
 		this.drag_mouse_move = function(event) {
 			var self = event.data.self;
-			var state = self.drag;
 			
 			//find the event position
-			var zoom = $.zoomCorrection();
-			x = event.pageX / zoom;
-			y = event.pageY / zoom;
-			
-			//run callback and cancel if the callback return true
-			if (this.callbacks['drag'] != null && this.callbacks['drag'](this, x, y) == true) return;
+			x = event.pageX;
+			y = event.pageY;
 			
 			//find the new position
-			state.x = state.x_start - (state.x_offset - x);
-			state.y = state.y_start - (state.y_offset - y);
+			x = self.drag.x - (self.drag.x_offset - x);
+			y = self.drag.y - (self.drag.y_offset - y);
 			
 			//move the popup object
-			self.object.css("left", state.x + "px");
-			self.object.css("top", state.y + "px");
+			self.object.css("left", x + "px");
+			self.object.css("top", y + "px");
 			
-			//trigger custom event
-			this.object.trigger("drag", [this]);
+			//save the new position
+			self.options['left'] = x + "px";
+			self.options['top'] = y + "px";
 			
 			return;
 		}
@@ -611,181 +473,108 @@
 		
 		this.center_event = function(event) {
 			var self = event.data.self;
-			var options = self.center_options();
-			
-			//clear saved centering options if the once option is enabled
-			if(options['once'] == true) self.center_options(null);
-			
-			//always center if lock is enabled, ignoring other options
-			if (options['lock'] == true) self.center_lock();
-			//center if centering is enabled for the current event
-			else if (options[event.type] == true) self.center();
-			
+			if(self.options['center'] == true) self.center();
 			return;
 		}
-		
-		this.dom_event = function(event) {
-			var self = event.data.self;
-			
-			//trigger custom event
-			self.object.trigger("change", [this, event]);
-			
-			return;
-		}
-		
-		this.window_event = function(event) {
-			var self = event.data.self;
-			
-			//trigger custom event
-			self.object.trigger("window", [this, event]);
-			
-			return;
-		}
-		
-		//find the popup's object, or create it if it doesn't exist
-		this.object = $("#" + id);
-		if (this.object.length <= 0)
-		{
-			this.object = $("<div class='popup_window'></div>");
-			this.object.attr("id", id);
-		}
-		
-		this.object.addClass("popup_window");
-		this.object.css("display", "none");
-		this.object.css("position", "absolute")
-		this.object.css("z-index", 0);
-		
-		//create a content object for the popup
-		this.content_object = $("<div class='popup_content'></div>");
-		this.content_object.html(this.object.html());
-		this.object.empty().append(this.content_object);
-		
-		//set the object's parent from options
-		var parent = $(options['parent'] || 'body');
-		if (parent.is(this.object.parent()) != true) parent.append(this.object.detach());
-		
-		//set the object's style from options
-		if (typeof options['style'] == "object")
-		{
-			var object = this.object;
-			$.each(options['style'], function(key, value) {
-				object.css(key, value);
-			});
-		}
-		
-		//set content from options
-		if (options['content'] != null) this.content(options['content']);
-		
-		//load content from url in options
-		if (options['url'] != null) this.load(options['url'], options['parameters']);
-		
-		//set centering options
-		this.center_options(options['center']);
-		
-		//set template from options
-		this.template(options['template']);
-		
-		//set loading message from options
-		this.loading(options['loading']);
-		
-		//set background from options
-		this.background(options['background']);
 	}
 
 	function popup() {
-		this.popups = {};
-		this.z_index = 1000;
 		
-		//default options for all popups
-		this.options = {};
-		this.options['parent'] = null; //defaults to the document's body
-		this.options['url'] = null;
-		this.options['parameters'] = null;
-		this.options['reload'] = false;
-		this.options['template'] = null;
-		this.options['loading'] = null; //true enables a default loading message
-		this.options['background'] = null; //true will enable the default background
-		this.options['center'] = true;
-		this.options['drag'] = true;
-		this.options['style'] = {};
+		var self = this;
+		var popups = {};
+		this.popups = popups;
+		var z_index = 1000;
+		this.z_index = z_index;
+		
+		var default_options = {};
+		default_options['parent'] = null; //defaults to the document's body
+		default_options['reload'] = false;
+		default_options['template'] = null;
+		default_options['loading'] = "<div>Loading...</div>";
+		default_options['background'] = true; //true will enable the default background
+		default_options['center'] = null; //defaults to false for non-modal windows and true for modal windows
+		default_options['center_open'] = false;
+		default_options['center_once'] = false;
+		default_options['width'] = null; //defaults to "auto"
+		default_options['height'] = null; //defaults to "auto"
+		default_options['left'] = "0px";
+		default_options['top'] = "0px";
+		default_options['transform'] = null;
 		
 		
 		this.create = function(id, options) {
-			//don't create popups until the document is ready
-			if (document.readyState != "complete" && document.readyState != "interactive")
-				throw("Cannot create popup until the document is ready.");
-		
-			//merge the instance options with the default options
-			options = $.extend({}, this.options, options);
+			//wait to create popups until the document is ready
+			$(document).ready(function() {
+				//merge the options into the default options
+				if (options != null) options = $.extend({}, default_options, options);
+				
+				//create a new popup instance
+				if (popups[id] == null)
+				{
+					var popup = new popup_instance(self, id, options);
+					popups[id] = popup;
+				}
+				else
+				{
+					throw "Popup id \"" + id + "\" already exists.";
+				}
+			});
 			
-			//create a new popup instance
-			if (this.popups[id] == null)
-			{
-				var popup = new popup_instance(this, id, options);
-				this.popups[id] = popup;
-			}
-			else
-			{
-				throw "Popup id \"" + id + "\" already exists.";
-			}
-			
-			//trigger custom event
-			popup.object.trigger("create", [popup]);
-			
-			return popup;
+			return popups[id];
 		}
 		
-		this.destroy = function(id) {
+		this.destroy = function(id, options) {
 			//get the popup object
-			var popup = this.popups[id];
+			var popup = popups[id];
 			if (popup == null) throw "Popup id \"" + id + "\" not found.";
-			
-			//trigger custom event
-			popup.object.trigger("destroy", [popup]);
 			
 			//remove popup from DOM
 			popup.object.remove();
 			if (popup.background != null) popup.background.remove();
 			
 			//remove popup object from index
-			this.popups[id] = null;
+			popups[id] = null;
 			
 			return id;
 		}
 		
-		this.open = function(id) {
+		this.get = function(id) {
+			return popups[id];
+		}
+		
+		
+		this.open = function(id, options) {
 			//get the popup object
-			var popup = this.popups[id];
+			var popup = popups[id];
 			if (popup == null) throw "Popup id \"" + id + "\" not found.";
-			return popup.open();
+			return popup.open(options);
 		}
 		
 		this.close = function(id) {
 			//get the popup object and background
-			var popup = this.popups[id];
+			var popup = popups[id];
 			if (popup == null) throw "Popup id \"" + id + "\" not found.";
 			return popup.close();
 		}
 		
-		this.toggle = function(id) {
+		this.toggle = function(id, options) {
 			//get the popup object
-			var popup = this.popups[id];
+			var popup = popups[id];
 			if (popup == null) throw "Popup id \"" + id + "\" not found.";
-			return popup.toggle();
+			return popup.toggle(options);
 		}
 		
 		this.focus = function(id) {
 			//get the popup object
-			var popup = this.popups[id];
+			var popup = popups[id];
 			if (popup == null) return;
 			
 			//skip focusing if the popup is already focused
-			if (parseInt(popup.object.css("z-index")) >= this.z_index) return;
+			if (parseInt(popup.object.css("z-index")) >= z_index) return;
 			
 			//focus the popup
-			this.z_index += 2;
-			if (popup.background_object != null) popup.background_object.css("z-index", this.z_index - 1);
-			popup.object.css("z-index", this.z_index);
+			if (popup.background != null) popup.background.css("z-index", ++z_index);
+			popup.object.css("z-index", ++z_index);
 			
 			return popup;
 		}
@@ -798,54 +587,56 @@
 			element = $(element).closest(".popup_window");
 			
 			//return the popup window instance for the element
-			return this.popups[element.attr('id')];
+			return popups[element.attr('id')];
 		}
 		
 		//set or check default template for popups
 		this.template = function(object) {
-			if (object == null) return this.options['template'];
-			return this.options['template'] = object;
+			if (object == null) return default_options['template'];
+			return default_options['template'] = object;
 		}
 		
 		//set or check default content for loading popups
 		this.loading = function(object) {
-			if (object == null) return this.options['loading'];
-			return this.options['loading'] = object;
+			if (object == null) return default_options['loading'];
+			return default_options['loading'] = object;
 		}
 		
 		//set or check default background for popups
 		this.background = function(object) {
-			if (object == null) return this.options['background'];
-			return this.options['background'] = object;
+			if (object == null) return default_options['background'];
+			return default_options['background'] = object;
 		}
+		
+		//set or check options for popup
+		this.options = function(id, options) {
+			var popup = popups[id];
+			if (popup == null) return {};
+			return $.extend(popup.options, options);
+		}
+		
+		//set or check default options for newly created popups
+		this.default_options = function(options) {
+			return $.extend(default_options, options);
+		}
+		
+		//keep popups centered if window is scrolled or resized
+		var center_event = function() {
+			var popups = $.popup.popups;
+			$.each(popups, function(key, popup) {
+				if (popup.opened == true && popup.options['center'] == true)
+					popup.center();
+			});
+			return;
+		};
+		$(window).bind("scroll resize", center_event);
 	}
 
 	//add the popup function to jQuery
-  $.popup = new popup();
+	$.popup = new popup();
 	
 	//add popup function to elements
 	$.fn.popup = function() {
-		return $.popup.popups[this.attr('id')];
+		return $.popup.current(this);
 	};
-	
-	//backwards compatability mode warning
-	if (document.compatMode == "BackCompat")
-	{
-		console.log("Warning: Backwards compatibility mode is enabled. Backwards compatibility mode is not compatible with certain features of the Popup library. Please disable it by including a \"doctype\" declaration at the beginning of your html file.")
-	}
 })(jQuery);
-
-$().ready(function() {
-	//trigger a custom event when the window's zoom level is changed
-	(function () {
-		var zoom_level = $("body").css("zoom");
-    var zoom_event_trigger = function() {
-			if(zoom_level != $("body").css("zoom"))
-			{
-				zoom_level = $("body").css("zoom");
-				$(window).trigger("zoom", [zoom_level]);
-			}
-		}
-    setInterval(zoom_event_trigger, 16);
-	})();
-});

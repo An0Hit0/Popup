@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
 	<title>Popup Demo</title>
@@ -259,9 +259,6 @@
       <span style="color: #fb660a; font-weight: bold">var</span> <span style="color: #ffffff">options</span> <span style="color: #ffffff">=</span> <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#centered_popup_options&quot;</span><span style="color: #ffffff">).val();</span>
       <span style="color: #ffffff">centered_popup.center_options(options);</span>
     <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#centered_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#centered_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
-    <span style="color: #ffffff">});</span>
   <span style="color: #ffffff">});</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
 
@@ -337,9 +334,6 @@
       <span style="color: #ffffff">template_popup.template(</span><span style="color: #fb660a; font-weight: bold">null</span><span style="color: #ffffff">);</span>
       <span style="color: #ffffff">template_popup.content(template_disabled_message);</span>
     <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#template_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#template_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
-    <span style="color: #ffffff">});</span>
   <span style="color: #ffffff">});</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
 
@@ -413,9 +407,6 @@
     <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_remove_background&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
       <span style="color: #ffffff">background_popup.background(</span><span style="color: #fb660a; font-weight: bold">null</span><span style="color: #ffffff">);</span>
     <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
-    <span style="color: #ffffff">});</span>
   <span style="color: #ffffff">});</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
 
@@ -481,30 +472,109 @@
 		
 <!-- HTML generated using hilite.me --><div style="background: #111111; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .1em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #fb660a; font-weight: bold">&lt;script </span><span style="color: #ff0086; font-weight: bold">type=</span><span style="color: #0086d2">&quot;text/javascript&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
   <span style="color: #ffffff">$().ready(</span><span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-    <span style="color: #fb660a; font-weight: bold">var</span> <span style="color: #ffffff">background_popup</span> <span style="color: #ffffff">=</span> <span style="color: #ffffff">$.popup.create(</span><span style="color: #0086d2">&quot;background_popup&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">{</span><span style="color: #0086d2">&quot;center&quot;</span><span style="color: #ffffff">:</span> <span style="color: #fb660a; font-weight: bold">true</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;template&quot;</span><span style="color: #ffffff">:</span> <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#basic_template&quot;</span><span style="color: #ffffff">)});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">background_popup.toggle();</span>
+    <span style="color: #fb660a; font-weight: bold">var</span> <span style="color: #ffffff">loading_popup</span> <span style="color: #ffffff">=</span> <span style="color: #ffffff">$.popup.create(</span><span style="color: #0086d2">&quot;loading_popup&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">{</span><span style="color: #0086d2">&quot;content&quot;</span><span style="color: #ffffff">:</span> <span style="color: #0086d2">&quot;Nothing here yet...&quot;</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;center&quot;</span><span style="color: #ffffff">:</span> <span style="color: #fb660a; font-weight: bold">true</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;template&quot;</span><span style="color: #ffffff">:</span> <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#basic_template&quot;</span><span style="color: #ffffff">)});</span>
+    <span style="color: #ffffff">loading_popup.loading($(</span><span style="color: #0086d2">&quot;#loading_popup_demo_message&quot;</span><span style="color: #ffffff">));</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#loading_popup_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">loading_popup.toggle();</span>
     <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_add_background&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">background_popup.background(</span><span style="color: #fb660a; font-weight: bold">true</span><span style="color: #ffffff">);</span>
-    <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_add_custom_background&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">background_popup.background($(</span><span style="color: #0086d2">&quot;#background_popup_custom_background&quot;</span><span style="color: #ffffff">));</span>
-    <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_remove_background&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">background_popup.background(</span><span style="color: #fb660a; font-weight: bold">null</span><span style="color: #ffffff">);</span>
-    <span style="color: #ffffff">});</span>
-    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
-      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#background_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#loading_popup_test&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #008800; font-style: italic; background-color: #0f140f">//simulate extended display of loading message since it probably won&#39;t be visible for very long</span>
+      <span style="color: #ffffff">loading_popup.callback(</span><span style="color: #0086d2">&quot;change&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+        <span style="color: #ffffff">loading_popup.loading_object.show();</span>
+        <span style="color: #ffffff">loading_popup.content_object.hide();</span>
+        <span style="color: #ffffff">loading_popup.object.trigger(</span><span style="color: #0086d2">&quot;change&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">[loading_popup]);</span>
+        <span style="color: #ffffff">setTimeout(</span><span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+          <span style="color: #ffffff">loading_popup.loading_object.hide();</span>
+          <span style="color: #ffffff">loading_popup.content_object.show();</span>
+          <span style="color: #ffffff">loading_popup.object.trigger(</span><span style="color: #0086d2">&quot;change&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">[loading_popup]);</span>
+          <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#loading_popup_test&quot;</span><span style="color: #ffffff">).attr(</span><span style="color: #0086d2">&quot;disabled&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">null</span><span style="color: #ffffff">);</span>
+        <span style="color: #ffffff">},</span> <span style="color: #0086f7; font-weight: bold">1000</span><span style="color: #ffffff">);</span>
+        <span style="color: #ffffff">loading_popup.callback(</span><span style="color: #0086d2">&quot;change&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">null</span><span style="color: #ffffff">);</span>
+        <span style="color: #fb660a; font-weight: bold">return</span> <span style="color: #fb660a; font-weight: bold">false</span><span style="color: #ffffff">;</span>
+      <span style="color: #ffffff">});</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#loading_popup_test&quot;</span><span style="color: #ffffff">).attr(</span><span style="color: #0086d2">&quot;disabled&quot;</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;disabled&quot;</span><span style="color: #ffffff">);</span>
+      <span style="color: #ffffff">loading_popup.load(</span><span style="color: #0086d2">&quot;./loading_popup_content.html&quot;</span><span style="color: #ffffff">);</span>
     <span style="color: #ffffff">});</span>
   <span style="color: #ffffff">});</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
 
-<span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;background_popup&quot;</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_window&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
-  I am just here so this popup isn&#39;t empty. Please pay no attention to me.
+<span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;loading_popup_demo_message&quot;</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_loading&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+  <span style="color: #fb660a; font-weight: bold">&lt;img</span> <span style="color: #ff0086; font-weight: bold">src=</span><span style="color: #0086d2">&quot;loading.gif&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/div&gt;</span>
+</pre></div>
 
-<span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;background_popup_custom_background&quot;</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_background popup_close&quot;</span> <span style="color: #ff0086; font-weight: bold">style=</span><span style="color: #0086d2">&quot;background-image:url(&#39;pony.png&#39;);opacity:0.75;&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+		</div>
+	</div><br>
+	
+	<br>
+
+	<script type="text/javascript">
+		$().ready(function() {
+			var drag_popup = $.popup.create("drag_popup", {"center": "open", "template": $("#basic_template")});
+			$("#drag_popup_walking").hide();
+			$("#drag_popup").bind("drag_start", function() {
+				$("#drag_popup_standing").hide();
+				$("#drag_popup_walking").show();
+			});
+			$("#drag_popup").bind("drag_stop", function() {
+				$("#drag_popup_standing").show();
+				$("#drag_popup_walking").hide();
+			});
+			$("#drag_popup_toggle").bind("click", function() {
+				drag_popup.toggle();
+			});
+			$("#drag_popup_code_toggle").bind("click", function() {
+				$("#drag_popup_code").toggle();
+			});
+		});
+	</script>
+	
+	<div id="drag_popup" class="popup_window">
+		<div class="popup_drag"><center>
+			<div id="drag_popup_standing" style="background-image:url('stand.png');width:48px;height:96px;"></div>
+			<div id="drag_popup_walking" style="background-image:url('walk.gif');width:48px;height:96px;"></div>
+		</center></div>
+		Drag me around!<br>
+	</div>
+	
+	<div id="drag_popup_demo" class="block">
+		<div class="blocktitle">Draggable Popup</div>
+		Popup has support for draggable windows. This can be enabled simply by including an element with the class of "popup_drag" in your window's content, or in it's template. When the user drags this element, the window will move with it. Note that some centering modes may conflict with the drag feature.<br>
+		<br>
+		<center>
+			<button id="drag_popup_toggle">Show/Hide Window</button>
+			<button id="drag_popup_code_toggle">Show/Hide Source</button>
+		</center>
+		<br>
+		<div id="drag_popup_code" class="hidden">
+		
+<!-- HTML generated using hilite.me --><div style="background: #111111; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .1em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #fb660a; font-weight: bold">&lt;script </span><span style="color: #ff0086; font-weight: bold">type=</span><span style="color: #0086d2">&quot;text/javascript&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+  <span style="color: #ffffff">$().ready(</span><span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+    <span style="color: #fb660a; font-weight: bold">var</span> <span style="color: #ffffff">drag_popup</span> <span style="color: #ffffff">=</span> <span style="color: #ffffff">$.popup.create(</span><span style="color: #0086d2">&quot;drag_popup&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">{</span><span style="color: #0086d2">&quot;center&quot;</span><span style="color: #ffffff">:</span> <span style="color: #0086d2">&quot;open&quot;</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;template&quot;</span><span style="color: #ffffff">:</span> <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#basic_template&quot;</span><span style="color: #ffffff">)});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_walking&quot;</span><span style="color: #ffffff">).hide();</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;drag_start&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_standing&quot;</span><span style="color: #ffffff">).hide();</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_walking&quot;</span><span style="color: #ffffff">).show();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;drag_stop&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_standing&quot;</span><span style="color: #ffffff">).show();</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_walking&quot;</span><span style="color: #ffffff">).hide();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">drag_popup.toggle();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#drag_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
+    <span style="color: #ffffff">});</span>
+  <span style="color: #ffffff">});</span>
+<span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
+
+<span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;drag_popup&quot;</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_window&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+  <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_drag&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;center&gt;</span>
+    <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;drag_popup_standing&quot;</span> <span style="color: #ff0086; font-weight: bold">style=</span><span style="color: #0086d2">&quot;background-image:url(&#39;stand.png&#39;);width:48px;height:96px;&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;/div&gt;</span>
+    <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;drag_popup_walking&quot;</span> <span style="color: #ff0086; font-weight: bold">style=</span><span style="color: #0086d2">&quot;background-image:url(&#39;walk.gif&#39;);width:48px;height:96px;&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;/div&gt;</span>
+  <span style="color: #fb660a; font-weight: bold">&lt;/center&gt;&lt;/div&gt;</span>
+  Drag me around!<span style="color: #fb660a; font-weight: bold">&lt;br&gt;</span>
 <span style="color: #fb660a; font-weight: bold">&lt;/div&gt;</span>
 </pre></div>
 
@@ -513,6 +583,88 @@
 	
 	<br>
 	
+	<script type="text/javascript">
+		$().ready(function() {
+			var resize_popup = $.popup.create("resize_popup", {"center": "open", "template": $("#resize_template")});
+			$("#resize_popup_walking").hide();
+			$("#resize_popup").bind("drag_start resize_start", function() {
+				$("#resize_popup_standing").hide();
+				$("#resize_popup_walking").show();
+			});
+			$("#resize_popup").bind("drag_stop resize_stop", function() {
+				$("#resize_popup_standing").show();
+				$("#resize_popup_walking").hide();
+			});
+			$("#resize_popup_toggle").bind("click", function() {
+				resize_popup.toggle();
+			});
+			$("#resize_popup_code_toggle").bind("click", function() {
+				$("#resize_popup_code").toggle();
+			});
+		});
+	</script>
+	
+	<div id="resize_popup" class="popup_window">
+		<div class="popup_drag" style="width:100%;height:100%;overflow:hidden;">
+			<center>Drag me around... Wait, where am I?<br>Maybe that thing in the lower right would help.</center>
+			<div id="resize_popup_standing" style="background-image:url('stand.png');width:100%;height:100%;"></div>
+			<div id="resize_popup_walking" style="background-image:url('walk.gif');width:100%;height:100%;"></div>
+		</div>
+	</div>
+	
+	<div id="resize_template" class="popup_template">
+		<div class="popup_menu">
+			<span class="popup_close"><a href="javascript:void(0);">X</a></span>
+		</div>
+		<div class="popup_content"></div>
+		<div class="popup_resize_corner popup_resize">◢</div>
+	</div>
+	
+	<div id="resize_popup_demo" class="block">
+		<div class="blocktitle">Resizable Popup</div>
+		Popup has support for resizable windows. This can be enabled simply by including an element with the class of "popup_resize" in your window's content, or in it's template. When the user drags this element, the window will either expand or contract from the lower right corner. Dragging from other corners or edges is not currently supported, but may be supported at some point in the future.<br>
+		<br>
+		<center>
+			<button id="resize_popup_toggle">Show/Hide Window</button>
+			<button id="resize_popup_code_toggle">Show/Hide Source</button>
+		</center>
+		<br>
+		<div id="resize_popup_code" class="hidden">
+		
+<!-- HTML generated using hilite.me --><div style="background: #111111; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .1em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #fb660a; font-weight: bold">&lt;script </span><span style="color: #ff0086; font-weight: bold">type=</span><span style="color: #0086d2">&quot;text/javascript&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+  <span style="color: #ffffff">$().ready(</span><span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+    <span style="color: #fb660a; font-weight: bold">var</span> <span style="color: #ffffff">resize_popup</span> <span style="color: #ffffff">=</span> <span style="color: #ffffff">$.popup.create(</span><span style="color: #0086d2">&quot;resize_popup&quot;</span><span style="color: #ffffff">,</span> <span style="color: #ffffff">{</span><span style="color: #0086d2">&quot;center&quot;</span><span style="color: #ffffff">:</span> <span style="color: #0086d2">&quot;open&quot;</span><span style="color: #ffffff">,</span> <span style="color: #0086d2">&quot;template&quot;</span><span style="color: #ffffff">:</span> <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#basic_template&quot;</span><span style="color: #ffffff">)});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_walking&quot;</span><span style="color: #ffffff">).hide();</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;resize_start&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_standing&quot;</span><span style="color: #ffffff">).hide();</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_walking&quot;</span><span style="color: #ffffff">).show();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;resize_stop&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_standing&quot;</span><span style="color: #ffffff">).show();</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_walking&quot;</span><span style="color: #ffffff">).hide();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">resize_popup.toggle();</span>
+    <span style="color: #ffffff">});</span>
+    <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_code_toggle&quot;</span><span style="color: #ffffff">).bind(</span><span style="color: #0086d2">&quot;click&quot;</span><span style="color: #ffffff">,</span> <span style="color: #fb660a; font-weight: bold">function</span><span style="color: #ffffff">()</span> <span style="color: #ffffff">{</span>
+      <span style="color: #ffffff">$(</span><span style="color: #0086d2">&quot;#resize_popup_code&quot;</span><span style="color: #ffffff">).toggle();</span>
+    <span style="color: #ffffff">});</span>
+  <span style="color: #ffffff">});</span>
+<span style="color: #fb660a; font-weight: bold">&lt;/script&gt;</span>
+
+<span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;resize_popup&quot;</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_window&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;</span>
+  <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">class=</span><span style="color: #0086d2">&quot;popup_drag&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;center&gt;</span>
+    <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;resize_popup_standing&quot;</span> <span style="color: #ff0086; font-weight: bold">style=</span><span style="color: #0086d2">&quot;background-image:url(&#39;stand.png&#39;);width:48px;height:96px;&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;/div&gt;</span>
+    <span style="color: #fb660a; font-weight: bold">&lt;div</span> <span style="color: #ff0086; font-weight: bold">id=</span><span style="color: #0086d2">&quot;resize_popup_walking&quot;</span> <span style="color: #ff0086; font-weight: bold">style=</span><span style="color: #0086d2">&quot;background-image:url(&#39;walk.gif&#39;);width:48px;height:96px;&quot;</span><span style="color: #fb660a; font-weight: bold">&gt;&lt;/div&gt;</span>
+  <span style="color: #fb660a; font-weight: bold">&lt;/center&gt;&lt;/div&gt;</span>
+  Drag me around!<span style="color: #fb660a; font-weight: bold">&lt;br&gt;</span>
+<span style="color: #fb660a; font-weight: bold">&lt;/div&gt;</span>
+</pre></div>
+
+		</div>
+	</div><br>
+	
+	<br>
 	
 </body>
 </html>
