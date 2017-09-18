@@ -1,5 +1,5 @@
 /*
-	Popup 1.1.0
+	Popup 1.1.1
 	Written by: An0Hit0
 	Liscence: http://www.opensource.org/licenses/mit-license.php
 */
@@ -7,6 +7,7 @@
 (function($) {
 	
 	function popup_instance(owner, id, options) {
+	
 		this.owner = owner;
 		this.id = id;
 		this.options = options || {};
@@ -53,6 +54,10 @@
 		this.object.css("position", "absolute")
 		this.object.css("pointer-events", "auto");
 		this.parent.append(this.object);
+		
+		//save initial object width
+		this.width = this.object.prop('style').width;
+		if (this.width == "" || this.width == null) this.width = "auto";
 		
 		//load the template
 		this.template = $(this.options['template']).first();
@@ -131,6 +136,7 @@
 				else if (options['content'] != null)
 				{
 					this.content(options['content']);
+					options['content'] = null;
 				}
 				//if all else fails, just display the popup div as is...
 				else
@@ -188,6 +194,8 @@
 			if(this.options['center'] == true || this.options['center_open'] == true || this.options['center_once'] == true)
 			{
 				//center the popup to the window
+				this.object.css("left", 0);
+				this.object.css("top", 0);
 				this.center();
 				//set center_once option to false once the window has been centered
 				this.options['center_once'] = false;
@@ -280,6 +288,8 @@
 				this.init();
 				this.bind();
 			}
+			
+			return this;
 		}
 		
 		//reload the current url in the popup window
@@ -294,9 +304,9 @@
 			
 			//set up the template
 			if (this.template != null)
-				this.object.html(template.html());
+				this.object.html(this.template.html());
 			else
-				this.object.html("<div class='popup_content'></div>");
+				this.object.html("<div class='popup_window'><div class='popup_content'></div></div>");
 			
 			//set the new content
 			this.object.find(".popup_content").html(content);
@@ -305,8 +315,10 @@
 			this.init();
 			this.bind();
 			
-			return new_content;
+			return content;
 		}
+		
+		var width_fixed = false;
 		
 		this.center = function() {
 			var scroll_top = $(window).scrollTop();
@@ -316,7 +328,7 @@
 			var document_height = $(document).height();
 			var document_width = $(document).width();
 			var height = this.object.outerHeight(true);
-			var width;
+			var width = this.object.outerWidth(true);
 			var top;
 			var bottom;
 			var left;
@@ -326,21 +338,21 @@
 			var zoom = 1.0;
 			if(this.ios == true) zoom = document.documentElement.clientWidth / window.innerWidth;
 			
-			//fix width
-			if(this.ajax != null) //popup still loading
-				this.object.css("width", "auto");
-			else //popup loaded
-				this.object.css("width", "100%");
-			width = this.object.outerWidth(true);
-			
-			if(width > window_width / zoom)
+			//fix width to be within viewport size
+			if (this.width == "auto")
 			{
-				this.object.css("width", window_width / zoom);
+				this.object.css("width", "auto");
 				width = this.object.outerWidth(true);
+				
+				if (width > window_width / zoom)
+				{
+					this.object.css("width", window_width / zoom);
+					width = this.object.outerWidth(true);
+				}
 			}
 			
 			//calculate top position
-			if(height < window_height / zoom)
+			if (height < window_height / zoom)
 			{
 				top = scroll_top + (window_height / zoom - height) / 2;
 			}
@@ -357,7 +369,7 @@
 			}
 			
 			//calculate left position
-			if(width < window_width / zoom)
+			if (width < window_width / zoom)
 			{
 				left = scroll_left + (window_width / zoom - width) / 2;
 			}
@@ -371,6 +383,12 @@
 					left = scroll_left;
 				else if (right < scroll_left + (window_width / zoom))
 					left = scroll_left + (window_width / zoom) - width;
+			}
+			
+			//fix left for automatic width popups
+			if (this.width == "auto" && left + width > window_width)
+			{
+				left = window_width - width;
 			}
 			
 			//set position by css
@@ -476,6 +494,7 @@
 			if(self.options['center'] == true) self.center();
 			return;
 		}
+		
 	}
 
 	function popup() {
@@ -503,22 +522,19 @@
 		
 		
 		this.create = function(id, options) {
-			//wait to create popups until the document is ready
-			$(document).ready(function() {
-				//merge the options into the default options
-				if (options != null) options = $.extend({}, default_options, options);
-				
-				//create a new popup instance
-				if (popups[id] == null)
-				{
-					var popup = new popup_instance(self, id, options);
-					popups[id] = popup;
-				}
-				else
-				{
-					throw "Popup id \"" + id + "\" already exists.";
-				}
-			});
+			//merge the options into the default options
+			if (options != null) options = $.extend({}, default_options, options);
+			
+			//create a new popup instance
+			if (popups[id] == null)
+			{
+				var popup = new popup_instance(self, id, options);
+				popups[id] = popup;
+			}
+			else
+			{
+				throw "Popup id \"" + id + "\" already exists.";
+			}
 			
 			return popups[id];
 		}
@@ -579,6 +595,20 @@
 			return popup;
 		}
 		
+		this.focused = function() {
+			var result = null;
+			var max = 0;
+			$.each(popups, function(id, popup) {
+				var index = parseInt(popup.object.css("z-index"));
+				if(popup.opened && index > max)
+				{
+					max = index;
+					result = popup;
+				}
+			});
+			return result;
+		}
+		
 		this.current = function(element) {
 			//use value of "this" as element if no element is passed
 			if (element == null) element = this;
@@ -630,6 +660,7 @@
 			return;
 		};
 		$(window).bind("scroll resize", center_event);
+		
 	}
 
 	//add the popup function to jQuery
