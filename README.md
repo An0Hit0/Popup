@@ -54,4 +54,7 @@ Demo/Examples
 
 Check out http://files.isans.net/Popup/demo/index.html to see jquery.popup in action!
 
+License
+------
+
 This library is licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
