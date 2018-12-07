@@ -19,7 +19,7 @@ Features
 
 -Move/resize windows by dragging (optional/customizable)
 
--Custom event for popup open/close
+-Custom events for popup open/close
 
 
 Usage
