@@ -1,7 +1,7 @@
 ﻿<!doctype html>
 <html>
 <head>
-	<title>Popup Demo</title>
+	<title>jquery.popup Demo</title>
 
 	<link rel="stylesheet" href="demo.css" TYPE="text/css" MEDIA="screen">
 	<link rel="stylesheet" href="jquery.popup.css" TYPE="text/css" MEDIA="screen">
@@ -12,7 +12,7 @@
 
 <body>
 
-	<div class="title">Popup Demo</div>
+	<div class="title">jquery.popup Demo</div>
 	
 	<!-- Basic Popup Demo -->
 	
@@ -35,7 +35,7 @@
 	
 	<div id="basic_popup_demo" class="block">
 		<div class="blocktitle">Basic Popup</div>
-		Creating a new window with Popup is easy! Just call $.popup.create("popup_id"). If an element already exists with the id "popup_id", it will be used to create the window. Otherwise, Popup will create the element for you.<br>
+		Creating a new window with jquery.popup is easy! Just call $.popup.create("popup_id"). If an element already exists with the id "popup_id", it will be used to create the window. Otherwise, jquery.popup will create the element for you.<br>
 		<br>
 		<center>
 			<button id="basic_popup_toggle">Show/Hide Window</button>
@@ -217,7 +217,7 @@
 	
 	<div id="centered_popup_demo" class="block">
 		<div class="blocktitle">Centered Popup</div>
-		Popup features full support for centering. In order to enable centering, you can set the "center" option when creating the popup, or later by calling the popup's center_options method. The value you set it to should be a space separated string that specifies the centering modes you wish to enable. Here is a list of all the valid centering modes:<br>
+		jquery.popup features full support for centering. In order to enable centering, you can set the "center" option when creating the popup, or later by calling the popup's center_options method. The value you set it to should be a space separated string that specifies the centering modes you wish to enable. Here is a list of all the valid centering modes:<br>
 		<br>
 		<ul style="margin-left:16px;">
 			<li>open - Centers the popup immediately after it is opened.</li>
@@ -307,7 +307,7 @@
 	
 	<div id="template_popup_demo" class="block">
 		<div class="blocktitle">Templates</div>
-		Manually entering buttons to let users close popup windows gets a little old after a while doesn't it? That's why Popup has full support for templates! Templates can be used to define a snippet of HTML that will wrap the content of the popup whenever it is loaded or changed. You can set the template either by setting the template option of the popup when it is being created, or by calling the template method after it has been created. The value you set can be either a jQuery object, a valid jQuery selector string, or a string of HTML (but only if it starts with a valid HTML tag). The template can include any content you like, but in general it is probably most useful to provide menu buttons and/or navigation features. The template should contain at least one empty div with the class "popup_content", in which Popup will place the actual content when it is set.<br>
+		Manually entering buttons to let users close popup windows gets a little old after a while doesn't it? That's why jquery.popup has full support for templates! Templates can be used to define a snippet of HTML that will wrap the content of the popup whenever it is loaded or changed. You can set the template either by setting the template option of the popup when it is being created, or by calling the template method after it has been created. The value you set can be either a jQuery object, a valid jQuery selector string, or a string of HTML (but only if it starts with a valid HTML tag). The template can include any content you like, but in general it is probably most useful to provide menu buttons and/or navigation features. The template should contain at least one empty div with the class "popup_content", in which jquery.popup will place the actual content when it is set.<br>
 		<br>
 		<center>
 			<button id="template_popup_open">Show Window</button>
@@ -380,7 +380,7 @@
 	
 	<div id="background_popup_demo" class="block">
 		<div class="blocktitle">Backgrounds</div>
-		Popup supports backgrounds in order to let you create modal style popups. Backgrounds will fill the area of the parent element with an element that will block the user from interacting with the parent until the popup is closed. Backgrounds can be set just like templates, by setting the background option when creating the popup, or by calling the popup's background method. Valid values that can be used to set the background incude a jQuery selector, a valid jQuery selector string, an HTML string that starts with a valid HTML tag, or the value true, which will set the background to an empty element with the class "popup_background". The default background also includes the "popup_close" class, so it will trigger a close event when it is clicked, but user created backgrounds must make sure they manually include the class "popup_close" if they wish to emulate this behavior.<br>
+		jquery.popup supports backgrounds in order to let you create modal style popups. Backgrounds will fill the area of the parent element with an element that will block the user from interacting with the parent until the popup is closed. Backgrounds can be set just like templates, by setting the background option when creating the popup, or by calling the popup's background method. Valid values that can be used to set the background incude a jQuery selector, a valid jQuery selector string, an HTML string that starts with a valid HTML tag, or the value true, which will set the background to an empty element with the class "popup_background". The default background also includes the "popup_close" class, so it will trigger a close event when it is clicked, but user created backgrounds must make sure they manually include the class "popup_close" if they wish to emulate this behavior.<br>
 		<br>
 		<center>
 			<button id="background_popup_toggle">Show/Hide Window</button>
@@ -460,7 +460,7 @@
 	
 	<div id="loading_popup_demo" class="block">
 		<div class="blocktitle">Loading Messages</div>
-		Popup allows you to define a loading message that will be displayed while waiting for AJAX content to be loaded. As with backgrounds and templates, the content can be set with the "loading" option when creating the popup, or by calling the popup's loading method. Valid values that can be used to set the loading message incude a jQuery selector, a valid jQuery selector string, an HTML string that starts with a valid HTML tag, or the value true, which will set the loading message to an empty element with the class "popup_loading". The default value for this setting is null, which will leave the current popup content displayed until the new content is ready.<br>
+		jquery.popup allows you to define a loading message that will be displayed while waiting for AJAX content to be loaded. As with backgrounds and templates, the content can be set with the "loading" option when creating the popup, or by calling the popup's loading method. Valid values that can be used to set the loading message incude a jQuery selector, a valid jQuery selector string, an HTML string that starts with a valid HTML tag, or the value true, which will set the loading message to an empty element with the class "popup_loading". The default value for this setting is null, which will leave the current popup content displayed until the new content is ready.<br>
 		<br>
 		<center>
 			<button id="loading_popup_toggle">Show/Hide Window</button>
@@ -539,7 +539,7 @@
 	
 	<div id="drag_popup_demo" class="block">
 		<div class="blocktitle">Draggable Popup</div>
-		Popup has support for draggable windows. This can be enabled simply by including an element with the class of "popup_drag" in your window's content, or in it's template. When the user drags this element, the window will move with it. Note that some centering modes may conflict with the drag feature.<br>
+		jquery.popup has support for draggable windows. This can be enabled simply by including an element with the class of "popup_drag" in your window's content, or in it's template. When the user drags this element, the window will move with it. Note that some centering modes may conflict with the drag feature.<br>
 		<br>
 		<center>
 			<button id="drag_popup_toggle">Show/Hide Window</button>
@@ -622,7 +622,7 @@
 	
 	<div id="resize_popup_demo" class="block">
 		<div class="blocktitle">Resizable Popup</div>
-		Popup has support for resizable windows. This can be enabled simply by including an element with the class of "popup_resize" in your window's content, or in it's template. When the user drags this element, the window will either expand or contract from the lower right corner. Dragging from other corners or edges is not currently supported, but may be supported at some point in the future.<br>
+		jquery.popup has support for resizable windows. This can be enabled simply by including an element with the class of "popup_resize" in your window's content, or in it's template. When the user drags this element, the window will either expand or contract from the lower right corner. Dragging from other corners or edges is not currently supported, but may be supported at some point in the future.<br>
 		<br>
 		<center>
 			<button id="resize_popup_toggle">Show/Hide Window</button>
