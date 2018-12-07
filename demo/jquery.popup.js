@@ -1,6 +1,6 @@
 /*
 	Popup 1.1.1
-	Written by: An0Hit0
+	Written by: Miyuki333
 	Liscence: http://www.opensource.org/licenses/mit-license.php
 */
 
